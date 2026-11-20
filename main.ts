@@ -104,6 +104,12 @@ function main(): void {
   if (typeof data !== "object" || data === null || Array.isArray(data)) {
     abort(`${DESCRIPTOR} must be a JSON object`);
   }
+  // The descriptor is exactly one key: anything extra (or a missing "url")
+  // would pass local validation yet fail the gate, so reject it here.
+  const keys = Object.keys(data as Record<string, unknown>);
+  if (keys.length !== 1 || keys[0] !== "url") {
+    abort(`${DESCRIPTOR} must hold only the "url" key`);
+  }
   const url = (data as Record<string, unknown>).url;
   if (typeof url !== "string") {
     abort(`${DESCRIPTOR} must hold a string "url"`);
